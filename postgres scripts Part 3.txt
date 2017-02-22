@@ -1,0 +1,42 @@
+CREATE OR REPLACE FUNCTION _final_median(REAL[])
+   RETURNS NUMERIC AS
+$$
+   SELECT AVG(val)
+   FROM (
+     SELECT val
+     FROM unnest($1) val
+     ORDER BY 1
+     LIMIT  2 - MOD(array_upper($1, 1), 2)
+     OFFSET CEIL(array_upper($1, 1) / 2.0) - 1
+   ) sub;
+$$
+LANGUAGE 'sql' IMMUTABLE;
+ 
+CREATE AGGREGATE median(REAL) (
+  SFUNC=array_append,
+  STYPE=REAL[],
+  FINALFUNC=_final_median,
+  INITCOND='{}'
+);
+
+
+
+
+COPY test TO '/data/donor_csvs/test.csv' DELIMITER ',' CSV HEADER;
+
+ALTER TABLE resources ALTER COLUMN 
+item_unit_price
+TYPE numeric USING  
+item_unit_price
+::numeric;
+
+ALTER TABLE aaprojects ALTER COLUMN 
+date_expiration
+TYPE date USING  
+date_expiration
+::date;
+
+	
+ALTER TABLE projects ALTER COLUMN total_price_including_optional_support TYPE numeric USING total_price_including_optional_support::numeric;
+
+SELECT median(total_price_including_optional_support) AS median_value FROM projects where total_price_including_optional_support > 1 ;

@@ -1,0 +1,301 @@
+
+check projects where completed date is before date posted.
+
+create table aaprojects as select * from xxprojects where date_posted >= '2012-01-01' and 
+date_posted < '2016-10-01';
+
+alter table projects rename to xxprojects;
+
+select count(*) from aaprojects;
+
+ALTER TABLE aaprojects RENAME COLUMN  total_price_excluding_optional_support TO price;
+
+ALTER TABLE aaprojects RENAME COLUMN  total_price_including_optional_support TO priceopt;
+
+**************************************************
+PROBLEM
+150 projects have zero donations and are completed
+None of these are in the donations table. 
+Largest is $9500
+Recommend delete
+
+select count(A._projectid) from 
+aaprojects A where
+A.funding_status = 'completed' and A.total_donations=0;
+
+select A._projectid, A.total_donations, A.date_posted, A.date_completed, A.price, A.priceopt from 
+aaprojects A where
+A.funding_status = 'completed' and A.total_donations=0 order by A.price desc;
+
+delete from aaprojects A where A.funding_status = 'completed' and A.total_donations=0;
+
+**************************************************
+PROBLEM
+54,652 projects are live 
+Recommend delete these for modelling purposes
+Profile: avg price is $742. Avg price of proj after 2012 is $648. Avg price of 2015 and 2016 is $708.
+
+select count(*) from aaprojects where funding_status = 'live';
+
+
+delete from aaprojects A where A.funding_status = 'live';
+
+**************************************************
+PROBLEM
+39 projects have expiration date before date posted
+largest is $3400
+Recommend delete
+
+select count(*) from aaprojects where date_posted > date_expiration;
+
+delete from aaprojects where date_posted > date_expiration;
+
+**************************************************
+
+create resources from existing projects
+
+create table aaresources as select 
+B.* 
+from xxresources B inner join aaprojects A on 
+A._projectid = B._projectid;
+
+alter table resources rename to xxresources;
+
+Use statement below to see how many projects in aaproject not in aaresources 
+Result is that all projects are listed in resources 
+
+select count(A._projectid) from aaprojects A left join aaresources B on
+A._projectid = B._projectid where
+B._projectid is null;
+
+
+**************************************************
+create donations from existing projects
+
+create table aadonations as select 
+B.*
+from xxdonations B join aaprojects A on 
+A._projectid = B._projectid;
+
+alter table giving donations to xxdonations;
+
+select count(distinct _projectid) from donations;
+
+select count(A._projectid) from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null;
+
+
+**********************************************************
+PROBLEM
+There are 44 projects that are not in donations that have funding status 'completed'
+and total_donation amount > 0;
+Recommend delete
+
+FIRST Export these to a table because they need to be removed from resources also
+
+create table aacompletedprojnotindonations as select A._projectid from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations > 0;
+
+
+delete from aaprojects where _projectid in 
+(select * from aacompletedprojnotindonations);
+
+**********************************************************
+
+Delete same project ids from aaresources
+
+delete from aaresources B where B._projectid in
+(select * from aacompletedprojnotindonations);
+
+**********************************************************
+
+Statements to examine projects that are not in donations that have funding status 'completed'
+and total_donation amount > 0;
+
+
+select max(A.total_donations) from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations >0;
+
+select A._projectid, A.date_posted, A.date_completed, A.total_donations from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations >0 order by A.total_donations desc;
+
+delete from aaprojects A where A._projectid in
+(select A._projectid from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations > 0);
+
+
+**********************************************************
+Using specific ids:
+
+delete from aaresources where 
+_projectid = '1481abeaf64fb8aad18a2491fff8419d' or 
+_projectid = '87ffb3af493facd9e3a0c546893e235a' or 
+_projectid = 'f04f59380d7f3c958125748b6ac16375' or 
+_projectid = 'f6c26b8be44353431dbed83656f8c1ee' or 
+_projectid = '782bcc4b1ed7e808ab799d78f934fa19' or 
+_projectid = '7671a506dcd74fe1a1d5344de9a132cf' or 
+_projectid = 'ba8949acd3ac8f63d1427215d988e422' or 
+_projectid = 'e98146b6b5fcfe54c1e1455a827a16b7' or 
+_projectid = '0ce509062e2af4cfc8e8bad3826b4ad6' or 
+_projectid = '8fadc2e1721eaf976612cc0053b2cfb8' or 
+_projectid = '695edaab7fadcc40a6e9b3d45e97e928' or 
+_projectid = 'a3feafe879a207a910b03bc904b3f3a8' or 
+_projectid = 'a805ab125511f07ceb817f8dcf35d539' or 
+_projectid = 'db7436c6899300448fa6250b91976ca9' or 
+_projectid = 'd7bbb5ed3c506e2932540f8224452bf7' or 
+_projectid = '6e01700050502b60d9a3612e4f1c542c' or 
+_projectid = '56b17a1d51ce4a8caf38ff19f1ebd772' or 
+_projectid = 'ec62f4b96078f30c82590ced63445868' or 
+_projectid = '1825513c54599ad7f0948e3a69e8f97b' or 
+_projectid = 'a84676dce0dcf4ecc794f80bf75f355e' or 
+_projectid = 'c716d3c0c9dda3ae3b588a4f4c8fa649' or 
+_projectid = '303eecf71cc703aeabf09603368ccec3' or 
+_projectid = 'd5f7f63fa9f2ced0430050d947fbb0e0' or 
+_projectid = '68ef874f2ce205b5e142f38202289938' or 
+_projectid = '0d5dbe42611d1c374fa990b8b768e30b' or 
+_projectid = '923978de55603862ed6b687df4b6830f' or 
+_projectid = '19afd13aa956d18c0f1f6d8208f38c87' or 
+_projectid = 'a248dd426da8a0d208666db466ed0184' or 
+_projectid = '9e3ea067e552d5aad4557dd8fdbb5e1d' or 
+_projectid = 'ec5e8c49add3d73673499729be2de8d4' or 
+_projectid = '36fa2664d3b39e875a18f70ed552c120' or 
+_projectid = '42ea2ea46ed742266ae09d71c4b369de' or 
+_projectid = 'e09d27eeef00fa826e532f2736e99b46' or 
+_projectid = '21ac12413d8a15b6f28e1464cc744064' or 
+_projectid = 'c3732048dc182bb573a5a1de110dc28c' or 
+_projectid = '6d6bd6ab7cfdae9c82c2c8ece7e90abe' or 
+_projectid = '4a5de359424bb64f3c88497cd4650815' or 
+_projectid = '0bc08b583211788682fb733316cf487c' or 
+_projectid = '222943244df41ae0239b55ddc712774f' or 
+_projectid = '2d11db45c885b48b082f8c0c9d6e147b' or 
+_projectid = 'eb68bb997820d1e89c3a1032df61f273' or 
+_projectid = 'b2926b93db61874feb8529e4924699a6' or 
+_projectid = 'b3c0810461562726130f331d9d3a0797' or 
+_projectid = 'dc1c458f0275b00ad3b682fbba222a14';
+
+
+**********************************************************
+
+create table aagivingproj as select 
+B.*
+from xxgivingproj B inner join aaprojects A on 
+A._projectid = B._projectid;
+
+alter table givingproj rename to xxgivingproj;
+
+select count(A._projectid) from aagivingproj;
+
+select count(A._projectid) from aaprojects A left join aagivingproj B on
+A._projectid = B._projectid where
+B._projectid is null;
+
+
+**********************************************************
+
+create table aagiving as select 
+B.* 
+from xxgiving B inner join aagivingproj A on 
+A.giving_page_id = B.giving_page_id;
+
+alter table giving rename to xxgiving;
+
+select count(distinct giving_page_id) from aagiving;
+
+select A.giving_page_id, A._projectid from aagivingproj A left join aagiving B on
+A.giving_page_id = B.giving_page_id where
+B.giving_page_id is null;
+
+
+**********************************************************
+PROBLEM
+4 projects that are in givingprojects have giving page ids that are not in giving pages 
+BUT 2 of these projects are also on other giving pages
+
+Recommend : 
+Delete these  4 giving pages from aagivingproj
+2 of the projects will still remain in giving proj
+Delete other 2 from aaprojects
+Delete other 2 from aaresources
+Delete other 2 from aadonations if applicable
+
+DELETE 4
+delete from aagivingproj A where A.giving_page_id in 
+(select A.giving_page_id from  aagivingproj A left join aagiving B on
+A.giving_page_id = B.giving_page_id where
+B.giving_page_id is null);
+
+DELETE 2
+delete from aaprojects A where 
+A._projectid = '03fc657f9948814f77a0a9fbc7233031' or 
+A._projectid = '8c30e6f0c7007e114ec7815d1a05a88a';
+
+DELETE 2
+delete from aaresources A where 
+A._projectid = '03fc657f9948814f77a0a9fbc7233031' or 
+A._projectid = '8c30e6f0c7007e114ec7815d1a05a88a';
+
+DELETE 2
+delete from aadonations A where 
+A._projectid = '03fc657f9948814f77a0a9fbc7233031' or 
+A._projectid = '8c30e6f0c7007e114ec7815d1a05a88a';
+
+**********************************************************
+**********************************************************
+**********************************************************
+**********************************************************
+
+HAVE NOT DONE THESE YET
+
+CHECK OTHER ISSUES:
+
+No project donations are more than donation total
+select count(distinct _projectid) from aadonations where donation_to_project > donation_total;
+
+**********************************************************
+
+PROBLEM: 131 projects don't tie monetarily
+select count(distinct _projectid) from aadonations where donation_total - donation_to_project != donation_optional_support;
+
+Only 7 of them have a delta > $1
+Recommend remove these 6:
+
+select A._projectid, date_posted,
+donation_to_project,
+donation_optional_support as optional,
+donation_total as total,
+(donation_total - donation_to_project) as correctopt, 
+(donation_total - donation_to_project - donation_optional_support) as delta
+from aadonations A join aaprojects B on 
+A._projectid = B._projectid
+where abs(donation_total - donation_to_project - donation_optional_support) > 1
+order by delta limit 20;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

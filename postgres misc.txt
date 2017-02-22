@@ -1,0 +1,54 @@
+
+select count(A._projectid) from 
+aaprojects A
+where
+A.funding_status = 'completed' and A.total_donations=0 ;
+
+
+COPY alias FROM '/data/finaltables/csvs/public.alias.csv' DELIMITER ';' CSV;
+
+
+select avg(date_completed - date_posted) as runtime from aaprojects;
+select max(date_completed - date_posted) as runtime from aaprojects;
+select min(date_completed - date_posted) as runtime from aaprojects;
+
+select count(_projectid) from aaprojects where date_completed = date_posted;
+select avg(price) from aaprojects where date_completed = date_posted;
+
+
+
+
+select count(_projectid) from aaprojects where date_posted > date_expiration;
+select count(_projectid) from aaprojects where date_posted > date_completed;
+select _projectid, price, date_posted, date_expiration 
+from aaprojects where date_posted > date_expiration order by price desc;
+
+
+select count(_projectid) from aaprojects where funding_status = 'live';
+
+select avg(price) from aaprojects where funding_status = 'live';
+
+select count(_projectid) from aaprojects where date_posted is null or 
+ date_completed is null or date_expiration is null;
+
+select _projectid, date_posted, date_completed from projectstest where date_posted > date_completed;
+
+
+create table aaprojectstest as select * from projectstest wherse date_posted>'2012-01-01' and 
+date_posted<'2016-10-01';
+
+
+select _projectid, date_posted, date_completed from aaprojects where date_posted > date_completed limit 20;
+
+select _projectid, date_posted, date_completed from aaprojects 
+where _projectid = '6264a44454cd19fedafd35a7680981e7';
+
+ALTER TABLE projects ALTER COLUMN 
+date_posted
+TYPE date USING  
+date_posted
+::date;
+
+
+
+
