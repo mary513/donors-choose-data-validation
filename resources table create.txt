@@ -1,0 +1,14 @@
+
+
+CREATE TABLE resources(
+
+_resourceid character varying(32),
+_projectid character varying(32),
+vendorid character varying(32),
+vendor_name character varying(100),
+item_name character varying(25000),
+item_number character varying(510),
+item_unit_price character varying(25),
+item_quantity character varying(10)
+
+);
