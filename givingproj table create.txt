@@ -1,7 +1,0 @@
-
-CREATE TABLE givingproj(
-
-giving_page_id character varying(32),
-_projectid character varying(32)
-
-);
