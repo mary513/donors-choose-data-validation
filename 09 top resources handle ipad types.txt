@@ -1,0 +1,63 @@
+
+update aares_projtype set item = trim(item) where item like '%apple ipad with retina display wi-fi - 4th generation - tablet%';
+
+
+
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad with retina display wi-fi - 4th generation - tablet';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini wi-fi - tablet - ios 6 - 16 gb - 7.9';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple - ipad mini 2 with wi-fi - 16gb - silver';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple - ipad mini 2 with wi-fi - 16gb - space gray';
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad 2 wi-fi - tablet - ios 5 - 16 gb - 9.7';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini md531ll/a (16gb, wi-fi, white / silver)';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini md528ll/a (16gb, wi-fi, black & slate)';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini md531ll/a (16gb, wi-fi only, white / silver)';
+
+
+*****Handled above
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad 2 wi-fi - tablet - ios 5 - 16 gb - 9.7';
+
+
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air with wi-fi - 16gb - space gray';
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad with retina display wi-fi - 4th generation';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini mf432ll/a (16gb, wi-fi, space gray )';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple - ipad mini with wi-fi - 16gb - space gray/black';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini wi-fi - tablet - ios 6 - 32 gb - 7.9';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple - ipad mini wi-fi - 16gb - space gray';
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air 2 wi-fi 16gb - space gray';
+update aares_projtype set item = 'apple ipad cover' where item = 'apple - smart cover for apple ipad mini and ipad mini with retina displ';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple - ipad mini 2 with wi-fi - 16gb - space gray/black';
+
+
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad with retina display wi-fi + cellular - 4th generatio';
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad 2 mc769ll/a tablet (16gb, wifi, black) 2nd generation';
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air with wi-fi - 16gb - space gray/black';
+update aares_projtype set item = 'osmo gaming for ipad' where item = 'osmo gaming system for ipad, standard packaging, genius kit';
+update aares_projtype set item = 'apple ipad' where item = 'apple ipad with retina display md510ll/a (16gb, wi-fi, black) 4th generat';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini wi-fi + cellular - tablet - ios 6 - 16 gb';
+update aares_projtype set item = 'apple ipad case' where item = 'apple ipad smart case - case for web tablet';
+update aares_projtype set item = 'apple ipad case' where item = 'otterbox - defender series case for apple ipad mini, ipad mini 2 and';
+update aares_projtype set item = 'osmo gaming for ipad' where item = 'osmo gaming system for ipad';
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air with wi-fi - 32gb - space gray';
+
+
+update aares_projtype set item = 'apple ipad case' where item = 'griffin technology - survivor slim case for apple ipad mini, mini 2 ';
+update aares_projtype set item = 'apple ipad case' where item = 'otterbox - defender series case for apple ipad mini and ipad mini with ';
+update aares_projtype set item = 'apple ipad case' where item = 'ixcc  shockproof silicone case cover for all apple ipad mini models, ext';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini 2 me276ll/a (16gb, wi-fi, black with space gray)';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple - ipad mini 2 with wi-fi - 16gb - silver/white';
+update aares_projtype set item = 'apple ipad case' where item = 'otterbox - defender series case for apple ipad mini - black';
+update aares_projtype set item = 'apple ipad case' where item = 'griffin technology - survivor slim case for apple ipad mini, ipad mi';
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air with wi-fi - 16gb - silver';
+update aares_projtype set item = 'apple ipad case' where item = 'apple ipad smart cover - protective cover for web tablet';
+update aares_projtype set item = 'osmo gaming for ipad' where item = 'osmo - gaming system for select apple ipad models - multi';
+
+
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini 2 with retina display me279ll/a (16gb, wi-fi, white with ';
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air 2 wi-fi 64gb - space gray';
+update aares_projtype set item = 'apple ipad case' where item = 'otterbox - defender series case for apple ipad air - black';
+update aares_projtype set item = 'apple ipad case' where item = 'apple - smart case for apple ipad mini and ipad mini with retina displa';
+update aares_projtype set item = 'apple ipad case' where item = 'hde kids light weight shock proof handle case for ipad mini / mini 2 / mini';
+update aares_projtype set item = 'apple ipad' where item = 'apple - ipad with retina display wi-fi - 32gb - black';
+update aares_projtype set item = 'apple ipad mini' where item = 'apple ipad mini wi-fi - tablet - ios 6 - 64 gb - 7.9';
+update aares_projtype set item = 'apple ipad air' where item = 'apple - ipad air with wi-fi - 16gb - silver/white';
+update aares_projtype set item = 'apple ipad case' where item = 'shopny case - apple ipad mini case - 360 degree rotating stand case cover w';

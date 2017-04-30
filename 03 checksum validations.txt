@@ -1,0 +1,74 @@
+
+
+Checksum validations:
+*******************************************************************
+
+create table proj_in_givingproj_not_in_proj as 
+select giveproj._projectid from givingproj giveproj left join projects proj 
+on giveproj._projectid = proj._projectid 
+where proj._projectid is null;
+
+
+create table projnotindonorations as 
+select proj._projectid from projects proj left join donations don 
+on don._projectid = proj._projectid 
+where don._projectid is null;
+
+
+create table proj_not_in_givingproj as 
+select proj._projectid, proj.funding_status from projects proj left join givingproj giveproj 
+on giveproj._projectid = proj._projectid 
+where giveproj._projectid is null;
+
+create table projnotinres as 
+select proj._projectid, proj.date_posted from projects proj left join resources res 
+on res._projectid = proj._projectid 
+where res._projectid is null;
+
+create table givingprojlive as
+select A._projectid, count(giving_page_id) as giving_count from givingproj A inner join 
+liveproj B on A._projectid = B._projectid group by A._projectid;
+
+*******************************************************************
+
+select avg(B.doncount) from (select count(_donationid) as doncount, _projectid  from donations group by _projectid) B;
+
+
+select count(A._projectid) from aaprojects A where A.funding_status = 'completed' and A.total_donations=0 ;
+select count(_projectid)  from projects where total_price_including_optional_support > total_price_excluding_optional_support;
+
+select avg(donation_to_project) as avgdon, count(_donationid) as numdons, _projectid from donations 
+group by _projectid order by avgdon desc;
+
+
+
+*******************************************************************
+
+Examine avg time for projects vs live
+*******************************************************************
+
+select avg(date_completed - date_posted) as runtime from aaprojects;
+select max(date_completed - date_posted) as runtime from aaprojects;
+select min(date_completed - date_posted) as runtime from aaprojects;
+
+select avg(date_completed - date_posted) as runtime where funding_status = 'live' from aaprojects;
+select max(date_completed - date_posted) as runtime where funding_status = 'live' from aaprojects;
+select min(date_completed - date_posted) as runtime where funding_status = 'live' from aaprojects;
+
+select count(_projectid) from aaprojects where funding_status = 'live';
+select avg(price) from aaprojects where funding_status = 'live';
+
+select count(_projectid) from aaprojects where date_completed = date_posted;
+select avg(price) from aaprojects where date_completed = date_posted;
+
+
+select count(_projectid) from aaprojects where date_posted > date_expiration;
+select count(_projectid) from aaprojects where date_posted > date_completed;
+select _projectid, price, date_posted, date_expiration from aaprojects where date_posted > date_expiration order by price desc;
+
+
+select count(_projectid) from aaprojects where date_posted is null or  date_completed is null or date_expiration is null;
+
+select _projectid, date_posted, date_completed from projectstest where date_posted > date_completed;
+
+create table aaprojectstest as select * from projectstest wherse date_posted>'2012-01-01' and date_posted<'2016-10-01';

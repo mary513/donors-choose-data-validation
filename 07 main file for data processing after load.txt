@@ -1,0 +1,349 @@
+
+************************************************************
+************************************************************
+DATA VALIDATION for projects between Jan. 1, 2012 and Oct. 1, 2016
+************************************************************
+************************************************************
+
+Create table aaprojects as select * from projects where date_posted >= '2012-01-01' and 
+date_posted < '2016-10-01';
+
+#create backup copy at bottom of list
+alter table projects rename to xxprojects;
+
+select count(*) from aaprojects;
+
+ALTER TABLE aaprojects RENAME COLUMN  total_price_excluding_optional_support TO price;
+ALTER TABLE aaprojects RENAME COLUMN  total_price_including_optional_support TO priceopt;
+
+**************************************************
+PROBLEM
+150 projects have zero donations and are completed
+None of these are in the donations table. 
+Largest is $9500
+Recommend delete
+
+select count(A._projectid) from 
+aaprojects A where
+A.funding_status = 'completed' and A.total_donations=0;
+
+select A._projectid, A.total_donations, A.date_posted, A.date_completed, A.price, A.priceopt from 
+aaprojects A where
+A.funding_status = 'completed' and A.total_donations=0 order by A.price desc;
+
+delete from aaprojects A where A.funding_status = 'completed' and A.total_donations=0;
+
+**************************************************
+PROBLEM
+54,652 projects are live 
+Recommend delete these for modelling purposes
+Profile: avg price is $742. Avg price of proj after 2012 is $648. Avg price of 2015 and 2016 is $708.
+
+select count(*) from aaprojects where funding_status = 'live';
+
+
+delete from aaprojects A where A.funding_status = 'live';
+
+**************************************************
+PROBLEM
+68 PROJECTS have less donations than total required amount by more than $10 and are marked 'complete'
+RECOMMEND: remove them
+
+select count(*) from aaprojnces A where funding_status = 'completed' and
+A.total_donations < (A.price-10);
+
+select A._projectid, A.date_posted, A.funding_status,
+A.price, A.priceopt, A.total_donations, B.dontotal as dontabledontotal,
+(A.total_donations - A.price) as delta
+
+from aaprojnces A join aaaggdon B on
+a._projectid = B._projectid
+where funding_status = 'completed' and
+A.total_donations < (A.price-10)
+order by
+delta;
+
+
+**************************************************
+PROBLEM
+39 projects have expiration date before date posted
+largest is $3400
+Recommend delete
+
+select count(*) from aaprojects where date_posted > date_expiration;
+
+delete from aaprojects where date_posted > date_expiration;
+
+**************************************************
+
+create resources from existing projects
+
+create table aaresources as select 
+B.* 
+from xxresources B inner join aaprojects A on 
+A._projectid = B._projectid;
+
+alter table resources rename to xxresources;
+
+Use statement below to see how many projects in aaproject not in aaresources 
+Result is that all projects are listed in resources 
+
+select count(A._projectid) from aaprojects A left join aaresources B on
+A._projectid = B._projectid where
+B._projectid is null;
+
+
+**************************************************
+create donations from existing projects
+
+create table aadonations as select 
+B.*
+from xxdonations B join aaprojects A on 
+A._projectid = B._projectid;
+
+alter table giving donations to xxdonations;
+
+select count(distinct _projectid) from donations;
+
+select count(A._projectid) from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null;
+
+
+**********************************************************
+PROBLEM
+There are 44 projects that are not in donations that have funding status 'completed'
+and total_donation amount > 0;
+Recommend delete
+
+FIRST Export these to a table because they need to be removed from resources also
+
+create table aacompletedprojnotindonations as select A._projectid from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations > 0;
+
+
+delete from aaprojects where _projectid in 
+(select * from aacompletedprojnotindonations);
+
+**********************************************************
+
+Delete same project ids from aaresources
+
+delete from aaresources B where B._projectid in
+(select * from aacompletedprojnotindonations);
+
+**********************************************************
+Statements to examine projects that are not in donations that have funding status 'completed'
+and total_donation amount > 0;
+
+
+select max(A.total_donations) from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations >0;
+
+select A._projectid, A.date_posted, A.date_completed, A.total_donations from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations >0 order by A.total_donations desc;
+
+delete from aaprojects A where A._projectid in
+(select A._projectid from aaprojects A left join aadonations B on
+A._projectid = B._projectid where
+B._projectid is null and
+A.funding_status = 'completed' and
+A.total_donations > 0);
+
+
+**********************************************************
+
+create table aagivingproj as select 
+B.*
+from xxgivingproj B inner join aaprojects A on 
+A._projectid = B._projectid;
+
+alter table givingproj rename to xxgivingproj;
+
+select count(A._projectid) from aagivingproj;
+
+select count(A._projectid) from aaprojects A left join aagivingproj B on
+A._projectid = B._projectid where
+B._projectid is null;
+
+
+**********************************************************
+
+create table aagiving as select 
+B.* 
+from xxgiving B inner join aagivingproj A on 
+A.giving_page_id = B.giving_page_id;
+
+alter table giving rename to xxgiving;
+
+select count(distinct giving_page_id) from aagiving;
+
+select A.giving_page_id, A._projectid from aagivingproj A left join aagiving B on
+A.giving_page_id = B.giving_page_id where
+B.giving_page_id is null;
+
+
+**********************************************************
+PROBLEM
+4 projects that are in givingprojects have giving page ids that are not in giving pages 
+BUT 2 of these projects are also on other giving pages
+
+Recommend : 
+Delete these  4 giving pages from aagivingproj
+2 of the projects will still remain in giving proj
+Delete other 2 from aaprojects
+Delete other 2 from aaresources
+Delete other 2 from aadonations if applicable
+
+DELETE 4
+delete from aagivingproj A where A.giving_page_id in 
+(select A.giving_page_id from  aagivingproj A left join aagiving B on
+A.giving_page_id = B.giving_page_id where
+B.giving_page_id is null);
+
+DELETE 2
+delete from aaprojects A where 
+A._projectid = '03fc657f9948814f77a0a9fbc7233031' or 
+A._projectid = '8c30e6f0c7007e114ec7815d1a05a88a';
+
+DELETE 2
+delete from aaresources A where 
+A._projectid = '03fc657f9948814f77a0a9fbc7233031' or 
+A._projectid = '8c30e6f0c7007e114ec7815d1a05a88a';
+
+DELETE 2
+delete from aadonations A where 
+A._projectid = '03fc657f9948814f77a0a9fbc7233031' or 
+A._projectid = '8c30e6f0c7007e114ec7815d1a05a88a';
+
+**********************************************************
+
+Create table aggregate donations:
+
+create table aaaggdon as
+select 
+ _projectid,
+count(distinct _donationid) as donationcount,
+count(distinct _donor_acctid) as donorcount,
+sum(donation_to_project) as dontoproj,
+sum(donation_optional_support) as donoptsupport,
+sum(donation_total) as dontotal
+from aadonations group by _projectid;
+
+**********************************************************
+**********************************************************
+**********************************************************
+CHECK OTHER ISSUES:
+
+No project donations are greater than donation total
+select count(distinct _projectid) from aadonations where donation_to_project > donation_total;
+
+**********************************************************
+
+PROBLEM: 7 projects don't tie monetarily internal on donations table by more than $1
+select count(distinct _projectid) 
+from aadonations 
+where abs(donation_total - donation_to_project - donation_optional_support) > 1;
+
+
+select A._projectid, date_posted,
+donation_to_project,
+donation_optional_support as optional,
+donation_total as total,
+(donation_total - donation_to_project) as correctopt, 
+(donation_total - donation_to_project - donation_optional_support) as delta
+from aadonations A join aaprojects B on 
+A._projectid = B._projectid
+where abs(donation_total - donation_to_project - donation_optional_support) > 1
+order by delta limit 20;
+
+
+Check to be sure that for each giving page that one of the above 7 pages were on, there is at least one other project on that page
+
+select giving_page_id, count(_projectid) as projcount from aagivingproj where giving_page_id = 
+'e30df8b3a0ba30a95030ca311de99fe0' or giving_page_id = 
+'d733ba44440d9a9c60f953acca2e4797' or giving_page_id =  
+'fa1eefdba25153439887bd39cdb88ac8' or giving_page_id =  
+'b4986ca274fa53be28875b6604fd772f' or giving_page_id =  
+'757d2bb489826fb8eed6c736ac9a120c' or giving_page_id =  
+'6126899f43fc074ac099e90bb6e8f93f' or giving_page_id =  
+'1f1f3ef994bd563623e7f06bc5d48535' or giving_page_id =  
+'dded4d6b5295e81336430bdd9fe38042' 
+group by giving_page_id;
+
+
+**********************************************************
+
+PROBLEM: 220 projects have total donations in aggregated donation table that don't tie to 
+total donation in projects table by $10 or more. 
+
+Recommend remove these projects. They were posted as far back as 2012. 
+
+select count(A._projectid) as numproj from aaaggdon A inner join aaprojnces B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=10;
+
+select min(B.date_posted) as mindate from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=10;
+
+select avg(B.price) as avgprice from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=10;
+
+
+select A._projectid, A.dontotal as dontabledon, B.total_donations as proj_don, 
+B.price, B.funding_status,
+abs(A.dontotal - B.total_donations) as delta
+from aaaggdon A inner join aaprojnces B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=10
+order by delta desc; 
+
+
+Delete from
+aaprojects
+aaprojnces
+aares
+aaresources
+aadonations
+aagivingproj
+
+*************DELETE FROM AAAGDON LAST*****************
+aaaggdon
+
+delete from aares where _projectid in
+(select A._projectid
+from aaaggdon A inner join aaprojnces B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=10);
+
+*****************************************************
+create table of distinct project ids from givingproj
+create new table joining projects to these distinct ids. 
+Use the column with distinct ids to set boolean t/false
+
+update aaprojncesgiv set has_givpage = 
+case when givproj is null then FALSE
+else TRUE
+end;
+
+CHECK/VALIDATE:
+select count(*) from aaprojncesgiv where has_givpage = FALSE and givproj is not null;
+
+*********************************************************
+update aatopgivpage set is_givpage_top500 = 
+case when top500 is null then FALSE
+else TRUE
+end;
+
+

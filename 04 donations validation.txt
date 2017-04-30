@@ -1,0 +1,119 @@
+
+Check Completed projects not in donations table
+
+*******************************************************
+
+select count(A._projectid) from projects A left join 
+donations B on A._projectid = B._projectid where B._projectid is null  
+and A.funding_status= 'completed';
+
+
+select A._projectid, A.date_posted, A.date_completed, A.total_price_excluding_optional_support,
+A.total_donations, A.funding_status
+from projects A left join 
+donations B on A._projectid = B._projectid where B._projectid is null  
+and A.funding_status= 'completed' order by total_price_excluding_optional_support;
+
+create table aaggdon as
+select 
+ _projectid,
+count(distinct _donationid) as donationcount,
+count(distinct _donor_acctid) as donorcount,
+sum(donation_to_project) as dontoproj,
+sum(donation_optional_support) as donoptsupport,
+sum(donation_total) as dontotal
+from aadonations group by _projectid;
+
+
+select avg(dontotal/doncount) from donproj2 where date_posted > '2003-01-01';
+
+select avg(total_donations/num_donors) from projects where date_posted > '2003-01-01' and funding_status = 'completed' and num_donors>0;
+
+
+***********************************************************
+Issues with donations totals
+***********************************************************
+
+
+select A._projectid, (A.total_donations - B.dontotal) as delta from projects A join donproj2 B on
+A._projectid = B._projectid
+where (A.total_donations - B.dontotal) > 10 
+and A.date_posted > '2012-01-01'
+group by A._projectid, A.total_donations, B.dontotal
+order by delta desc 
+
+
+select count(A._projectid) as numprojs from projects A join donproj2 B on
+A._projectid = B._projectid
+where 
+(A.total_donations - B.dontotal) > 10 
+and A.date_posted > '2012-01-01'
+group by A._projectid, A.total_donations
+order by A.total_donations desc 
+
+***************************************************************************
+Aggregated donations do not all tie
+***************************************************************************
+
+select count(*) from aa_aggdonations A join aaprojects B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations) > 100;
+
+
+select A.dontotal as projtable, B.total_donations as dontable,
+abs(A.dontotal - B.total_donations) as delta
+from aa_aggdonations A join aaprojects B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations) > 100 order by delta desc;
+
+************************************************************
+Attempt to tie aggregated donations
+************************************************************
+
+select count(A._projectid) as numwrongdonationtotal 
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=1;
+
+
+select min(B.date_posted) as mindate 
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=1;
+
+
+select B.date_posted, A._projectid, A.dontotal as Adon, B.total_donations as Bdon, 
+abs(A.dontotal - B.total_donations) as delta
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.dontotal - B.total_donations)>=1
+order by delta desc; 
+
+************************************************************
+Validate donor counts
+************************************************************
+
+
+select count(A._projectid) as numwrongdonorcount 
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.donorcount - B.num_donors) >=1;
+
+select min(B.date_posted) as earlydate
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.donorcount - B.num_donors) >=1;
+
+select avg(B.price) as avgprice
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.donorcount - B.num_donors) >=1;
+
+
+select B.date_posted, A._projectid, B.price, B.total_donations as Adon, A.dontotal as Bdon, 
+A.donorcount as Adonorcount, B.num_donors as Bdonorcount, 
+abs(A.donorcount - B.num_donors) as delta
+from aaaggdon A inner join aaproj B on 
+A._projectid = B._projectid where
+abs(A.donorcount - B.num_donors) > 1
+order by delta desc; 

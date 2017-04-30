@@ -1,0 +1,181 @@
+
+CREATE TABLE nces (
+
+n_ncesid character varying(14),
+n_stateschoolid character varying(50),
+n_ncesdistrictid character varying(20),
+n_statedistrictid character varying(20),
+n_lowgrade character varying(3),
+n_highgrade character varying(3),
+n_schoolname character varying(100),
+n_district character varying(100),
+n_countyname character varying(100),
+n_streetaddress character varying(100),
+n_city character varying(100),
+n_state character(2),
+n_zip character(5),
+n_zipfour character(4),
+n_phone character(15),
+n_localecode character varying(3),
+n_locale character varying(20),
+n_charter character varying(3),
+n_magnet character varying(3),
+n_title1school character varying(3),
+n_title1schoolwide character varying(3),
+n_numstudents character varying(20),
+n_numteachers character varying(20),
+n_ratio character varying(20),
+n_numfreelunch character varying(20),
+n_numreducedlunch character varying(20)
+
+
+);
+
+
+
+CREATE TABLE donations(_donationid character varying(32),
+ _projectid character varying(32),
+ _donor_acctid character varying(32),
+ _cartid character varying(32),
+ donor_city character varying(150),
+ donor_state character(2),
+ donor_zip character varying(10),
+ is_teacher_acct character(1),
+ donation_timestamp character varying(50),
+ donation_to_project real,
+ donation_optional_support real,
+ donation_total real,
+ donation_included_optional_support character(1),
+ payment_method character varying(50),
+ payment_included_acct_credit character(1),
+ payment_included_campaign_gift_card character(1),
+ payment_included_web_purchased_gift_card character(1),
+ payment_was_promo_matched character(1),
+ is_teacher_referred character(1),
+ giving_page_id character varying(150),
+ giving_page_type character varying(150),
+ for_honoree character(1),
+ thank_you_packet_mailed character(1)
+);
+
+
+
+CREATE TABLE givingproj(
+
+giving_page_id character varying(32),
+_projectid character varying(32)
+
+);
+
+
+CREATE TABLE giving(
+
+
+giving_page_id character varying(32),
+_creator_acctid character varying(32),
+created_date character varying(32),
+is_active character(1),
+most_recent_donation character varying(50),
+amount_raised character varying(15),
+number_of_donors character varying(10),
+number_of_students character varying(10),
+number_of_projects_supported character varying(10),
+number_of_teachers character varying(10),
+number_of_schools character varying(10)
+
+
+
+);
+
+
+
+CREATE TABLE projects (
+
+_projectid character varying(32),
+_teacher_acctid character varying(32),
+_schoolid character varying(32),
+school_ncesid character varying(150),
+school_latitude double precision,
+school_longitude double precision,
+school_city character varying(100),
+school_state character(2),
+school_zip character varying(10),
+school_metro character varying(150),
+school_district character varying(200),
+school_county character varying(100),
+school_charter character(1),
+school_magnet character(1),
+school_year_round character(1),
+school_nlns character(1),
+school_kipp character(1),
+school_charter_ready_promise character(1),
+teacher_prefix character varying(10),
+teacher_teach_for_america character(1),
+teacher_ny_teaching_fellow character(1),
+primary_focus_subject character varying(150),
+primary_focus_area character varying(150),
+secondary_focus_subject character varying(100),
+secondary_focus_area character varying(100),
+resource_type character varying(100),
+poverty_level character varying(25),
+grade_level character varying(25),
+vendor_shipping_charges character varying(25),
+sales_tax character varying(25),
+payment_processing_charges character varying(25),
+fulfillment_labor_materials character varying(25),
+total_price_excluding_optional_support real,
+total_price_including_optional_support real,
+students_reached bigint,
+total_donations real,
+num_donors bigint,
+eligible_double_your_impact_match character(1),
+eligible_almost_home_match character(1),
+funding_status character varying(25),
+date_posted timestamp,
+date_completed timestamp,
+date_thank_you_packet_mailed timestamp,
+date_expiration timestamp
+
+);
+
+
+
+CREATE TABLE resources(
+
+_resourceid character varying(32),
+_projectid character varying(32),
+vendorid character varying(32),
+vendor_name character varying(100),
+item_name character varying(25000),
+item_number character varying(510),
+item_unit_price character varying(25),
+item_quantity character varying(10)
+
+);
+
+
+CREATE TABLE giftcards(
+
+_giftcardid character varying(32),
+dollar_tier character varying(10),
+_buyer_acctid character varying(32),
+buyer_city character varying(150),
+buyer_state character(2),
+buyer_zip character varying(15),
+date_purchased character varying(20),
+_buyer_cartid character varying(32),
+_recipient_acctid character varying(32),
+recipient_city character varying(150),
+recipient_state character(2),
+recipient_zip character varying(15),
+redeemed character(1),
+date_redeemed character varying(20),
+_redeemed_cartid character varying(32),
+payment_method character varying(20),
+payment_included_acct_credit character(1),
+payment_included_campaign_gift_card character(1),
+payment_included_web_purchased_gift_card character(1),
+payment_was_promo_matched character(1)
+
+
+);

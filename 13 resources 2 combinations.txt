@@ -1,0 +1,212 @@
+create table aatop_products_SR as select
+*
+from (
+select row_number() over (partition by 
+
+A.primary_focus_subject, 
+B.resource_type
+
+order by count(distinct A._projectid) desc) as r,
+
+A.primary_focus_subject, 
+B.resource_type, 
+
+
+A.item, count(A._resourceid) as occurrences, 
+count(distinct A._projectid) as projects
+from 
+aares_projtype A 
+join aaproj B on
+A._projectid = B._projectid
+where A.item != '' and A.item != 'standard shipping' and trim(B.grade_level) != ''
+group by
+
+A.primary_focus_subject, 
+B.resource_type, 
+
+
+A.item
+) x
+where 
+x.r < 11;
+
+
+
+
+
+create table aatop_products_SP as select
+*
+from (
+select row_number() over (partition by 
+
+A.primary_focus_subject, 
+B.poverty_level 
+
+order by count(distinct A._projectid) desc) as r,
+
+A.primary_focus_subject, 
+B.poverty_level,
+
+A.item, count(A._resourceid) as occurrences, 
+count(distinct A._projectid) as projects
+from 
+aares_projtype A 
+join aaproj B on
+A._projectid = B._projectid
+where A.item != '' and A.item != 'standard shipping' and trim(B.grade_level) != ''
+group by
+
+A.primary_focus_subject, 
+B.poverty_level, 
+
+A.item
+) x
+where 
+x.r < 11;
+
+
+
+
+
+
+create table aatop_products_SG as select
+*
+from (
+select row_number() over (partition by 
+
+A.primary_focus_subject, 
+B.grade_level  
+
+order by count(distinct A._projectid) desc) as r,
+
+A.primary_focus_subject, 
+B.grade_level,
+
+A.item, count(A._resourceid) as occurrences, 
+count(distinct A._projectid) as projects
+from 
+aares_projtype A 
+join aaproj B on
+A._projectid = B._projectid
+where A.item != '' and A.item != 'standard shipping' and trim(B.grade_level) != ''
+group by
+
+A.primary_focus_subject, 
+B.grade_level, 
+
+A.item
+) x
+where 
+x.r < 11;
+
+
+
+
+
+
+create table aatop_products_RP as select
+*
+from (
+select row_number() over (partition by 
+
+B.resource_type, 
+B.poverty_level 
+
+order by count(distinct A._projectid) desc) as r,
+
+B.resource_type, 
+B.poverty_level,
+
+A.item, count(A._resourceid) as occurrences, 
+count(distinct A._projectid) as projects
+from 
+aares_projtype A 
+join aaproj B on
+A._projectid = B._projectid
+where A.item != '' and A.item != 'standard shipping' and trim(B.grade_level) != ''
+group by
+
+B.resource_type, 
+B.poverty_level, 
+
+A.item
+) x
+where 
+x.r < 11;
+
+
+
+
+
+
+
+create table aatop_products_RG as select
+*
+from (
+select row_number() over (partition by 
+
+B.resource_type, 
+B.grade_level  
+
+order by count(distinct A._projectid) desc) as r,
+
+B.resource_type, 
+B.grade_level,
+
+A.item, count(A._resourceid) as occurrences, 
+count(distinct A._projectid) as projects
+from 
+aares_projtype A 
+join aaproj B on
+A._projectid = B._projectid
+where A.item != '' and A.item != 'standard shipping' and trim(B.grade_level) != ''
+group by
+
+B.resource_type, 
+B.grade_level, 
+
+A.item
+) x
+where 
+x.r < 11;
+
+
+
+
+
+
+
+create table aatop_products_PG as select
+*
+from (
+select row_number() over (partition by 
+
+B.poverty_level, 
+B.grade_level  
+
+order by count(distinct A._projectid) desc) as r,
+
+B.poverty_level,
+B.grade_level,
+
+A.item, count(A._resourceid) as occurrences, 
+count(distinct A._projectid) as projects
+from 
+aares_projtype A 
+join aaproj B on
+A._projectid = B._projectid
+where A.item != '' and A.item != 'standard shipping' and trim(B.grade_level) != ''
+group by
+
+B.poverty_level, 
+B.grade_level, 
+
+A.item
+) x
+where 
+x.r < 11;
+
+
+
+
+

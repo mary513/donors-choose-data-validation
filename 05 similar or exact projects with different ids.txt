@@ -1,0 +1,62 @@
+
+***************************************************************************
+SIMILAR PROJECTS, some duplicates have large request amount
+***************************************************************************
+
+
+SELECT A._projectid as A, A.total_price_excluding_optional_support as Areq, 
+A.total_price_including_optional_support as Aopt, 
+A.total_donations as Atotdon, A.date_posted as Adate,
+A.school_city as Acity, A.school_state as Ast,
+
+B._projectid as B, B.total_price_excluding_optional_support as Breq, 
+B.total_price_including_optional_support as Bopt, 
+B.total_donations as Btotdon, B.date_posted as Bdate,
+B.school_city as Bcity, B.school_state as Bst
+
+FROM projects A, projects B 
+WHERE 
+
+A.total_price_excluding_optional_support = B.total_price_excluding_optional_support
+and A.total_price_including_optional_support = B.total_price_including_optional_support 
+and A.total_donations = B.total_donations
+
+
+AND A._projectid != B._projectid
+and A.funding_status = 'completed' 
+and B.funding_status = 'completed'
+and A.school_city = B.school_city
+and A.school_state = B.school_state
+and A.date_posted = B.date_posted
+and A.date_posted > '2008-01-01'
+order by A.total_donations desc
+limit 50;
+
+***************************************************************************
+
+
+SELECT count(distinct A._projectid)
+FROM projects A, projects B 
+WHERE 
+A.total_price_excluding_optional_support = B.total_price_excluding_optional_support
+and A.total_price_including_optional_support = B.total_price_including_optional_support 
+and A.total_donations = B.total_donations
+AND A._projectid != B._projectid
+limit 50;
+
+
+SELECT A._projectid as first, A.total_price_excluding_optional_support as first_req, 
+A.total_donations as first_tot, A.date_posted as first_post,
+B._projectid as second, B.total_price_excluding_optional_support as sec_req,
+B.total_donations as sec_tot, B.date_posted as sec_post
+
+FROM projects A, projects B 
+WHERE 
+
+A.total_price_excluding_optional_support = B.total_price_excluding_optional_support
+and A.total_price_including_optional_support = B.total_price_including_optional_support 
+and A.total_donations = B.total_donations
+
+
+AND A._projectid != B._projectid
+limit 50;

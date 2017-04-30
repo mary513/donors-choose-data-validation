@@ -1,0 +1,75 @@
+
+select distinct item, count(distinct item) as item_count from 
+aares_projtype 
+where item like '%ipad%'
+group by item
+order by item_count desc limit 100;
+
+
+select distinct item, count(_projectid) as item_count from 
+aares_projtype 
+where item like '%ipad%'
+group by item
+order by item_count desc limit 100;
+
+update aares_projtype set item = REPLACE(item, E'spurious square', '');
+
+update aares_projtype set item = REPLACE(item, 'trademark', '');
+
+update aares_projtype set item = REPLACE(item, '''', '');
+
+update aares_projtype set item = REPLACE(item, E'\\', '');
+
+create table aares_projtype_bak as select * from aares_projtype
+
+
+*********************************************************
+create table aatop10res as select
+*
+from (
+select row_number() over (partition by focus_area order by count(item) desc) as r,
+A.focus_area, A.item, count(A.item) as occur, 
+count(distinct A._projectid) as projects,
+sum(A.quantity_num) as quantity,
+round(sum(A.unit_price_num),2) as price, 
+case when sum(A.quantity_num) > 0 
+then round(sum(A.unit_price_num)/sum(A.quantity_num), 2)
+else 0
+end
+from 
+aares A
+group by
+A.focus_area, A.item
+) x
+where 
+x.r < 11;
+
+************************************************************************************
+BY FREE LUNCH CATEGORY
+************************************************************************************
+
+create table aatop10resources_under30freelunch as select
+*
+from (
+select row_number() over (partition by focus_area order by count(item) desc) as r,
+A.focus_area, A.item, count(A.item) as occur, 
+count(distinct A._projectid) as projects,
+sum(A.quantity_num) as quantity,
+round(sum(A.unit_price_num),2) as price, 
+case when sum(A.quantity_num) > 0 
+then round(sum(A.unit_price_num)/sum(A.quantity_num), 2)
+else 0
+end
+from 
+aares A
+join aaprojnces B
+on A._projectid = B._projectid 
+and B.freelunchcat = 'less than 30%'
+group by
+A.focus_area, A.item
+) x
+where 
+x.r < 11;
+
+
+

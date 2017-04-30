@@ -1,0 +1,32 @@
+
+Text replacement for spurious characters breaking line loads
+
+Replaces double backslash and apostrophe issues
+
+sed 's/"\\\\"/" "/g' 3mil>3milx
+sed 's/"\\"/\\/g' 3milx>3milxx
+sed 's/"\\'/""/g' 3milxx>3mil_z
+
+Use awk to generate smaller files and parse chars impacting end of line miss
+
+awk 'NR > 2000000 && NR <= 2000000' donations > 3mil
+awk 'NR > 3000000 && NR <= 4000000' donations > 4mil
+awk 'NR > 4000000 && NR <= 5000000' donations > 5mil
+
+etc
+
+copy scrubbed text files into empty tables
+
+COPY projects FROM '/data/donors/projects' DELIMITER ';' CSV;
+COPY resources FROM '/data/donors/resources' DELIMITER ';' CSV;
+COPY donations FROM '/data/donors/donations' DELIMITER ';' CSV;
+COPY givingproj FROM '/data/donors/givingproj' DELIMITER ';' CSV;
+COPY givingpages FROM '/data/donors/givingpages' DELIMITER ';' CSV;
+
+
+
+
+
+
+
+

@@ -1,0 +1,117 @@
+MODIFYING RESOURCES TABLE char types to numeric
+update aaresources set unit_price_num = cast(coalesce(nullif(item_unit_price ,''),'0') as numeric);
+update aaresources set quantity_num = cast(coalesce(nullif(item_quantity ,''),'0') as numeric);
+
+
+CREATE OR REPLACE FUNCTION _final_median(REAL[])
+   RETURNS NUMERIC AS
+$$
+   SELECT AVG(val)
+   FROM (
+     SELECT val
+     FROM unnest($1) val
+     ORDER BY 1
+     LIMIT  2 - MOD(array_upper($1, 1), 2)
+     OFFSET CEIL(array_upper($1, 1) / 2.0) - 1
+   ) sub;
+$$
+LANGUAGE 'sql' IMMUTABLE;
+ 
+CREATE AGGREGATE median(REAL) (
+  SFUNC=array_append,
+  STYPE=REAL[],
+  FINALFUNC=_final_median,
+  INITCOND='{}'
+);
+
+ALTER TABLE projects ALTER COLUMN 
+date_posted
+TYPE date USING  
+date_posted
+::date;
+
+ALTER TABLE aaprojects ALTER COLUMN 
+date_expiration
+TYPE date USING  
+date_expiration
+::date;
+
+ALTER TABLE aaprojects ALTER COLUMN 
+date_completed
+TYPE date USING  
+date_completed
+::date;
+
+ALTER TABLE aaprojects ALTER COLUMN 
+date_thank_you_packet_mailed
+TYPE date USING  
+date_thank_you_packet_mailed
+::date;
+
+
+
+ALTER TABLE aaprojects ALTER COLUMN 
+total_price_excluding_optional_support
+TYPE numeric USING  
+total_price_excluding_optional_support
+::numeric;
+
+ALTER TABLE aaprojects ALTER COLUMN 
+total_price_including_optional_support
+TYPE numeric USING  
+total_price_including_optional_support
+::numeric;
+
+
+ALTER TABLE aaprojects ALTER COLUMN 
+total_donations
+TYPE numeric USING  
+total_donations
+::numeric;
+
+ALTER TABLE aaresources ALTER COLUMN 
+item_number
+TYPE numeric USING  
+item_number
+::numeric;
+
+ALTER TABLE aaresources ALTER COLUMN 
+item_unit_price
+TYPE numeric USING  
+item_unit_price
+::numeric;
+
+ALTER TABLE aaresources ALTER COLUMN 
+item_quantity
+TYPE numeric USING  
+item_quantity
+::numeric;
+
+
+ALTER TABLE aadonations ALTER COLUMN 
+donation_to_project
+TYPE numeric USING  
+donation_to_project
+::numeric;
+
+
+ALTER TABLE aadonations ALTER COLUMN 
+donation_optional_support
+TYPE numeric USING  
+donation_optional_support
+::numeric;
+
+ALTER TABLE aadonations ALTER COLUMN 
+donation_total
+TYPE numeric USING  
+donation_total
+::numeric;
+
+ALTER TABLE aadonations ALTER COLUMN 
+donation_included_optional_support
+TYPE numeric USING  
+donation_included_optional_support
+::numeric;
+
+
+

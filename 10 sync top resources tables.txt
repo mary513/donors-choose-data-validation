@@ -1,0 +1,67 @@
+
+alter table aatop_products_g add column poverty_level character varying (25);
+alter table aatop_products_g add column primary_focus_subject character varying (150);
+alter table aatop_products_g add column resource_type character varying (100);
+alter table aatop_products_p add column primary_focus_subject character varying (150);
+alter table aatop_products_p add column resource_type character varying (100);
+alter table aatop_products_p add column grade_level character varying (25);
+alter table aatop_products_s add column resource_type character varying (100);
+alter table aatop_products_s add column grade_level character varying (25);
+alter table aatop_products_s add column poverty_level character varying (25);
+alter table aatop_products_r add column primary_focus_subject character varying (150);
+alter table aatop_products_r add column grade_level character varying (25);
+alter table aatop_products_r add column poverty_level character varying (25);
+alter table aatop_products_pg add column primary_focus_subject character varying (150);
+alter table aatop_products_pg add column resource_type character varying (100);
+alter table aatop_products_rg add column primary_focus_subject character varying (150);
+alter table aatop_products_rg add column poverty_level character varying (25);
+alter table aatop_products_rp add column primary_focus_subject character varying (150);
+alter table aatop_products_rp add column grade_level character varying (25);
+alter table aatop_products_sg add column resource_type character varying (100);
+alter table aatop_products_sg add column poverty_level character varying (25);
+alter table aatop_products_sp add column resource_type character varying (100);
+alter table aatop_products_sp add column grade_level character varying (25);
+alter table aatop_products_sr add column poverty_level character varying (25);
+alter table aatop_products_sr add column grade_level character varying (25);
+alter table aatop_products_srg add column poverty_level character varying (25);
+alter table aatop_products_srp add column grade_level character varying (25);
+alter table aatop_products_rpg add column primary_focus_subject character varying (150);
+alter table aatop_products_spg add column resource_type character varying (100);
+
+
+
+update aatop_products_g set poverty_level  = 'All';
+update aatop_products_g set primary_focus_subject = 'All';
+update aatop_products_g set resource_type = 'All';
+update aatop_products_p set primary_focus_subject = 'All';
+update aatop_products_p set resource_type = 'All';
+update aatop_products_p set grade_level = 'All';
+update aatop_products_s set resource_type = 'All';
+update aatop_products_s set grade_level = 'All';
+update aatop_products_s set poverty_level  = 'All';
+update aatop_products_r set primary_focus_subject = 'All';
+update aatop_products_r set grade_level = 'All';
+
+
+update aatop_products_r set poverty_level  = 'All';
+update aatop_products_pg set primary_focus_subject = 'All';
+update aatop_products_pg set resource_type = 'All';
+update aatop_products_rg set primary_focus_subject = 'All';
+update aatop_products_rg set poverty_level  = 'All';
+update aatop_products_rp set primary_focus_subject = 'All';
+update aatop_products_rp set grade_level = 'All';
+
+
+update aatop_products_sg set resource_type = 'All';
+update aatop_products_sg set poverty_level  = 'All';
+update aatop_products_sp set resource_type = 'All';
+update aatop_products_sp set grade_level = 'All';
+update aatop_products_sr set poverty_level  = 'All';
+update aatop_products_sr set grade_level = 'All';
+update aatop_products_srg set poverty_level  = 'All';
+update aatop_products_srp set grade_level = 'All';
+update aatop_products_rpg set primary_focus_subject = 'All';
+update aatop_products_spg set resource_type = 'All';
+
+
+
